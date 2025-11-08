@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.geysermc.floodgate.api.FloodgateApi;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -40,6 +41,8 @@ final class PlayerListener implements Listener {
     void onPlayerJoin(PlayerJoinEvent event) {
         String openBookId;
         List<String> booksToGiveIds;
+        boolean isBedrockPlayer = FloodgateApi.getInstance().isFloodgatePlayer(event.getPlayer().getUniqueId());
+
         if (event.getPlayer().hasPlayedBefore()) {
             openBookId = settings.getOpenBookOnJoin();
             booksToGiveIds = settings.getBooksOnJoin();
@@ -47,13 +50,16 @@ final class PlayerListener implements Listener {
             openBookId = settings.getOpenBookOnFirstJoin();
             booksToGiveIds = settings.getBooksOnFirstJoin();
         }
-        if (openBookId != null && !openBookId.isEmpty()) {
-            IBook book = InteractiveBooks.getBook(openBookId);
-            if (book != null) {
-                if (MC_VERSION_AFTER_1_14)
-                    book.open(event.getPlayer());
-                else
-                    Bukkit.getScheduler().runTask(InteractiveBooks.getInstance(), () -> book.open(event.getPlayer()));
+
+        if (!isBedrockPlayer) {
+            if (openBookId != null && !openBookId.isEmpty()) {
+                IBook book = InteractiveBooks.getBook(openBookId);
+                if (book != null) {
+                    if (MC_VERSION_AFTER_1_14)
+                        book.open(event.getPlayer());
+                    else
+                        Bukkit.getScheduler().runTask(InteractiveBooks.getInstance(), () -> book.open(event.getPlayer()));
+                }
             }
         }
 

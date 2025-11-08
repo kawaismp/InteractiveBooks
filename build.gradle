@@ -5,7 +5,7 @@ plugins {
 }
 
 tasks.compileJava.options.encoding = 'UTF-8'
-tasks.compileJava.sourceCompatibility = JavaVersion.VERSION_1_8
+tasks.compileJava.sourceCompatibility = JavaVersion.VERSION_17
 
 group = 'net.leonardo_dgs'
 version = '1.7.12'
@@ -21,6 +21,7 @@ repositories {
     maven { url = 'https://repo.codemc.org/repository/maven-public/' }
     maven { url = 'https://repo.aikar.co/content/groups/aikar/' }
     maven { url = 'https://jitpack.io/' }
+    maven { url = "https://repo.opencollab.dev/main/" }
 }
 
 dependencies {
@@ -28,6 +29,7 @@ dependencies {
     compileOnly 'net.md-5:bungeecord-chat:1.21-R0.4-SNAPSHOT'
     compileOnly 'me.clip:placeholderapi:2.11.6'
     compileOnly 'org.projectlombok:lombok:1.18.42'
+    compileOnly 'org.geysermc.floodgate:api:2.2.4-SNAPSHOT'
     annotationProcessor 'org.projectlombok:lombok:1.18.42'
     implementation 'de.tr7zw:item-nbt-api:2.15.3'
     implementation 'net.kyori:adventure-text-minimessage:4.25.0'
@@ -68,35 +70,4 @@ tasks.jar.enabled = false
 
 artifacts {
     archives shadowJar
-}
-
-publishing {
-    publications {
-        shadow(MavenPublication) {
-            publication ->
-                project.shadow.component(publication)
-                groupId = project.group
-                artifactId = project.name
-                version = project.version
-        }
-    }
-
-    repositories {
-        maven {
-            def snapshotUrl = "https://repo.codemc.io/repository/maven-snapshots/"
-            def releaseUrl = "https://repo.codemc.io/repository/maven-releases/"
-
-            url = project.version.endsWith("SNAPSHOT") ? snapshotUrl : releaseUrl
-
-            def mavenUsername = System.getenv("GRADLE_PROJECT_MAVEN_USERNAME") ? System.getenv("GRADLE_PROJECT_MAVEN_USERNAME") : null
-            def mavenPassword = System.getenv("GRADLE_PROJECT_MAVEN_PASSWORD") ? System.getenv("GRADLE_PROJECT_MAVEN_PASSWORD") : null
-
-            if (mavenUsername != null && mavenPassword != null) {
-                credentials {
-                    username = mavenUsername
-                    password = mavenPassword
-                }
-            }
-        }
-    }
 }
